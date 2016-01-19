@@ -1,10 +1,26 @@
+#!/usr/bin/env ruby
 require_relative 'contact'
 require 'pry'
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
 
-  attr_accessor :user_input
+  attr_reader :user_input
+
+  def self.create_list
+    new_list = ContactList.new
+    new_list.menu
+    case new_list.user_input
+    when "list"
+      new_list.list
+    when "new"
+      new_list.new_contact
+    when "show"
+      new_list.find_by_id
+    when "search"
+      new_list.find_by_search_term
+    end
+  end
 
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
   def menu
@@ -17,11 +33,7 @@ class ContactList
   end
 
   def list
-      num = 0
-    Contact.each do | row |
-      num += 1
-      puts "#{num}: #{row[0]}   #{row[1]}   #{row[2]}"
-    end
+    puts Contact.all
   end
 
   def new_contact
@@ -48,6 +60,7 @@ class ContactList
       puts "A contact with that email already exists. Contact was not created."
     else
       Contact.create(name, email, temp_numbers)
+      puts "Contact was successfully added."
     end
   end
 
@@ -56,8 +69,6 @@ class ContactList
       return true if row.any? { |ele| ele =~ /#{new_email}/i }
     end
   end
-
-
 
   def find_by_id
     puts "Enter ID number:"
@@ -71,24 +82,8 @@ class ContactList
     search_term = gets.chomp
     puts "#{CSV.read("data.csv").find_index(Contact.search(search_term)) + 1}. #{Contact.search(search_term).join("   ")}"
   end
-
-end
-
-def start_list
-  new_list = ContactList.new
-  new_list.menu
-  case new_list.user_input
-  when "list"
-    new_list.list
-  when "new"
-    new_list.new_contact
-  when "show"
-    new_list.find_by_id
-  when "search"
-    new_list.find_by_search_term
-  end
    
 
 end
 
-start_list
+ContactList.create_list
