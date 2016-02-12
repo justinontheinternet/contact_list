@@ -20,7 +20,6 @@ class Contact
   end
 
   def destroy
-    binding.pry
     Contact.connection.exec_params('DELETE FROM contacts WHERE id = $1', [self.id])
   end
 
