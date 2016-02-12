@@ -50,7 +50,6 @@ class Contact
     def search(term)
       # TODO: Select the Contact instances from the 'contacts.csv' file whose name or email attributes contain the search term.
       CSV.foreach("data.csv") do | row |
-        binding.pry
         return row if row.any? { |ele| ele =~ /#{term}/i }
       end
     end
